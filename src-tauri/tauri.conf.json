@@ -12,9 +12,16 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "sticky",
-        "width": 800,
-        "height": 600
+        "width": 360,
+        "height": 420,
+        "minWidth": 260,
+        "minHeight": 260,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "resizable": true,
+        "center": true
       }
     ],
     "security": {
