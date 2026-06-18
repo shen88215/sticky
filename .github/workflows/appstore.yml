@@ -53,7 +53,7 @@ jobs:
           security import installer.p12 -k "$KEYCHAIN" -P "$INSTALLER_CERT_PASS" -T /usr/bin/productbuild
 
           security list-keychains -d user -s "$KEYCHAIN"
-          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "" "$KEYCHAIN"
+          security set-key-partition-list -S apple-tool:,apple:,codesign:,productbuild: -s -k "" "$KEYCHAIN"
 
       - name: Add provisioning profile and API key
         run: |
@@ -70,13 +70,25 @@ jobs:
             --target universal-apple-darwin \
             --config src-tauri/tauri.appstore.conf.json
 
+      - name: Debug signing identities
+        run: |
+          security find-identity -v -p codesigning
+
       - name: Build signed pkg
         run: |
           APP_NAME="sticky"
           APP_PATH="src-tauri/target/universal-apple-darwin/release/bundle/macos/$APP_NAME.app"
 
-          xcrun productbuild \
-            --sign "3rd Party Mac Developer Installer" \
+          ls -lah "$APP_PATH"
+          du -sh "$APP_PATH"
+
+          INSTALLER_IDENTITY="$(security find-identity -v -p codesigning | grep '3rd Party Mac Developer Installer' | sed -E 's/.*"(.+)".*/\1/' | head -n 1)"
+
+          echo "Using installer identity: $INSTALLER_IDENTITY"
+
+          time xcrun productbuild \
+            --verbose \
+            --sign "$INSTALLER_IDENTITY" \
             --component "$APP_PATH" /Applications \
             "$APP_NAME.pkg"
 
