@@ -45,15 +45,19 @@ jobs:
           security create-keychain -p "" "$KEYCHAIN"
           security set-keychain-settings -lut 21600 "$KEYCHAIN"
           security unlock-keychain -p "" "$KEYCHAIN"
-
+  
           echo "$APP_CERT" | base64 --decode > app.p12
           echo "$INSTALLER_CERT" | base64 --decode > installer.p12
-
+  
           security import app.p12 -k "$KEYCHAIN" -P "$APP_CERT_PASS" -T /usr/bin/codesign
           security import installer.p12 -k "$KEYCHAIN" -P "$INSTALLER_CERT_PASS" -T /usr/bin/productbuild
-
+  
           security list-keychains -d user -s "$KEYCHAIN"
+          security default-keychain -s "$KEYCHAIN"
+  
           security set-key-partition-list -S apple-tool:,apple:,codesign:,productbuild: -s -k "" "$KEYCHAIN"
+  
+          security find-identity -v -p codesigning "$KEYCHAIN"
 
       - name: Add provisioning profile and API key
         run: |
@@ -87,7 +91,6 @@ jobs:
           echo "Using installer identity: $INSTALLER_IDENTITY"
 
           time xcrun productbuild \
-            --verbose \
             --sign "$INSTALLER_IDENTITY" \
             --component "$APP_PATH" /Applications \
             "$APP_NAME.pkg"
