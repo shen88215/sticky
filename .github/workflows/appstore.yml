@@ -59,6 +59,14 @@ jobs:
   
           security find-identity -v -p codesigning "$KEYCHAIN"
 
+      - name: Inspect imported certificates
+        run: |
+          security find-certificate -a "$KEYCHAIN"  
+          echo "==== identities ===="
+          security find-identity -v "$KEYCHAIN"  
+          echo "==== installer certs ===="
+          security find-certificate -a -c "3rd Party Mac Developer Installer" "$KEYCHAIN"
+
       - name: Add provisioning profile and API key
         run: |
           echo "${{ secrets.APPSTORE_PROVISION_PROFILE_BASE64 }}" | base64 --decode > src-tauri/embedded.provisionprofile
