@@ -94,7 +94,7 @@ jobs:
           ls -lah "$APP_PATH"
           du -sh "$APP_PATH"
 
-          INSTALLER_IDENTITY="$(security find-identity -v -p codesigning | grep '3rd Party Mac Developer Installer' | sed -E 's/.*"(.+)".*/\1/' | head -n 1)"
+          INSTALLER_IDENTITY="3rd Party Mac Developer Installer: ALTERNATIVE CONSTRUCTION AND ARCHITECTURAL TECHNOLOGIES UG LTD (7LD6J23Z34)"
 
           echo "Using installer identity: $INSTALLER_IDENTITY"
 
