@@ -58,6 +58,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign:,productbuild: -s -k "" "$KEYCHAIN"
   
           security find-identity -v -p codesigning "$KEYCHAIN"
+          security find-certificate -a -c "3rd Party Mac Developer Installer" "$KEYCHAIN"
 
       - name: Inspect imported certificates
         run: |
