@@ -80,9 +80,9 @@ jobs:
 
       - name: Create final app zip
         run: |
-          ditto -c -k --keepParent "$APP" "VPlayer-macOS.app.zip"
+          ditto -c -k --keepParent "$APP" "sticky-macOS.app.zip"
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          files: VPlayer-macOS.app.zip
+          files: sticky-macOS.app.zip

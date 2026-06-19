@@ -66,6 +66,16 @@ textarea {
   opacity: 0.75;
 }
 
+.noteTitle {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-size: 20px;
+  font-weight: 700;
+  outline: none;
+  padding: 8px;
+}
+
 .windowButtons {
   display: flex;
   gap: 6px;

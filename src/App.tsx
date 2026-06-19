@@ -5,6 +5,7 @@ import "./App.css";
 
 type Note = {
   id: string;
+  title: string;
   text: string;
   color: string;
   createdAt: number;
@@ -18,6 +19,7 @@ function createNote(): Note {
 
   return {
     id: crypto.randomUUID(),
+    title: "Untitled note",
     text: "",
     color: COLORS[0],
     createdAt: now,
@@ -42,8 +44,13 @@ function App() {
       const savedNotes = await s.get<Note[]>("notes");
 
       if (savedNotes && savedNotes.length > 0) {
-        setNotes(savedNotes);
-        setActiveNoteId(savedNotes[0].id);
+        const normalizedNotes = savedNotes.map((note, index) => ({
+          ...note,
+          title: note.title ?? `Note ${savedNotes.length - index}`,
+        }));
+
+        setNotes(normalizedNotes);
+        setActiveNoteId(normalizedNotes[0].id);
       } else {
         const firstNote = createNote();
         setNotes([firstNote]);
@@ -90,6 +97,18 @@ function App() {
 
       return next;
     });
+  }
+
+  function updateActiveNoteTitle(title: string) {
+    if (!activeNote) return;
+
+    setNotes((prev) =>
+      prev.map((note) =>
+        note.id === activeNote.id
+          ? { ...note, title, updatedAt: Date.now() }
+          : note
+      )
+    );
   }
 
   function updateActiveNoteText(text: string) {
@@ -153,7 +172,7 @@ function App() {
           >
             {notes.map((note, index) => (
               <option key={note.id} value={note.id}>
-                Note {notes.length - index}
+                {note.title.trim() || `Note ${notes.length - index}`}
               </option>
             ))}
           </select>
@@ -175,6 +194,13 @@ function App() {
             />
           ))}
         </section>
+
+        <input
+          className="noteTitle"
+          value={activeNote?.title ?? ""}
+          onChange={(e) => updateActiveNoteTitle(e.target.value)}
+          placeholder="Note title"
+        />
 
         <textarea
           value={activeNote?.text ?? ""}
